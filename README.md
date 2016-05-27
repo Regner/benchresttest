@@ -1,4 +1,7 @@
 # benchresttest
+[![Build Status](https://travis-ci.org/Regner/benchresttest.svg?branch=master)](https://travis-ci.org/Regner/benchresttest)
+[![Build Status](https://travis-ci.org/Regner/benchresttest.svg?branch=master)](https://travis-ci.org/Regner/benchresttest)
+
 Test for Bench.co.
 
 ## Example Usage
