@@ -1,6 +1,6 @@
 # benchresttest
 [![Build Status](https://travis-ci.org/Regner/benchresttest.svg?branch=master)](https://travis-ci.org/Regner/benchresttest)
-[![Build Status](https://travis-ci.org/Regner/benchresttest.svg?branch=master)](https://travis-ci.org/Regner/benchresttest)
+[![Coverage Status](https://coveralls.io/repos/github/Regner/benchresttest/badge.svg?branch=master)](https://coveralls.io/github/Regner/benchresttest?branch=master)
 
 Test for Bench.co.
 
