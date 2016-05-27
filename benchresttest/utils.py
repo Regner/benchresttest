@@ -11,8 +11,8 @@ BASE_TRANSACTIONS_URL = 'http://resttest.bench.co/transactions/{}.json'
 def crawl_transaction_api(page: int = 1, current_count: int = 0) -> list:
     """Crawls the transactions API and returns the processed response.
 
-    API does not have links to the next page or garuntee of quantity per page so
-    we attempt to figure out page numbers automatically.
+    Note: API does not have links to the next page or a guarantee of quantity
+          per page so we attempt to figure out page numbers automatically.
     """
     transactions_url = BASE_TRANSACTIONS_URL.format(page)
     response = requests.get(transactions_url)
@@ -32,7 +32,7 @@ def crawl_transaction_api(page: int = 1, current_count: int = 0) -> list:
 def process_transaction_results(transactions: list) -> list:
     """Runs the different processors for the transaction API results."""
     transactions = convert_transaction_amounts_to_float(transactions)
-    transactions = dedube_transactions(transactions)
+    transactions = dedupe_transactions(transactions)
     transactions = prettify_company_names(transactions)
     transactions = sort_transactions(transactions)
 
@@ -47,15 +47,15 @@ def convert_transaction_amounts_to_float(transactions: list) -> list:
     return transactions
 
 
-def dedube_transactions(transactions: list) -> list:
+def dedupe_transactions(transactions: list) -> list:
     """Merges duplicate transactions."""
-    dedubed_transactions = []
+    deduped_transactions = []
 
     for key, group in groupby(transactions, lambda x: "{}{}{}".format(x['Date'], x['Ledger'], x['Company'])):
         group = list(group)
 
         if len(group) == 1:
-            dedubed_transactions.append(group[0])
+            deduped_transactions.append(group[0])
 
         else:
             combined_transaction = {
@@ -68,9 +68,9 @@ def dedube_transactions(transactions: list) -> list:
             for thing in group:
                 combined_transaction['Amount'] += thing['Amount']
 
-            dedubed_transactions.append(combined_transaction)
+            deduped_transactions.append(combined_transaction)
 
-    return dedubed_transactions
+    return deduped_transactions
 
 
 def prettify_company_names(transactions: list) -> list:
