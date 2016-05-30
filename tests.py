@@ -4,7 +4,9 @@ import pytest
 import responses
 import sample_data
 
-from benchresttest import total_balance, fetch_transactions, fetch_transactions_categorized, fetch_running_tally
+from click.testing import CliRunner
+from benchresttest.cli import cli
+from benchresttest import fetch_total_balance, fetch_transactions, fetch_transactions_categorized, fetch_running_tally
 
 
 @pytest.fixture()
@@ -44,7 +46,7 @@ def test_total_balance(mock_responses):
 
     resttest objective: has a function that will calculate the total balance
     """
-    assert total_balance() == 18377.16
+    assert fetch_total_balance() == 18377.16
 
 
 @responses.activate
@@ -72,10 +74,39 @@ def test_fetch_transactions_by_category(mock_responses):
 
 @responses.activate
 def test_fetch_running_tally(mock_responses):
-    """Rest fetch_running_tally returns the correct data.
+    """Test fetch_running_tally returns the correct data.
 
     resttest objective: As a user, I need to calculate daily calculated balances. A running total for each day. For
                         example, if I have 3 transactions for the 5th 6th 7th, each for $5, then the daily balance on
                         the 6th would be $10.
     """
     assert fetch_running_tally() == sample_data.SAMPLE_RUNNING_TALLY
+
+
+@responses.activate
+def test_cli_balance(mock_responses):
+    """Test cli.balance outputs correctly."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ['--page', 'balance'])
+
+    assert result.exit_code == 0
+    assert result.output == '18377.16\n'
+
+
+@responses.activate
+def test_cli_running_tally(mock_responses):
+    """Test cli.running_tally outputs correctly."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ['running_tally'])
+
+    assert result.exit_code == 0
+    assert result.output == sample_data.CLI_OUTPUT_RUNNING_TALLY
+
+
+@responses.activate
+def test_cli_transactions(mock_responses):
+    """Test cli.transactions outputs correctly."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ['transactions'])
+
+    assert result.exit_code == 0
