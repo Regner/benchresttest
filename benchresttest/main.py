@@ -6,7 +6,7 @@ from .utils import (crawl_transaction_api, process_transaction_results, group_tr
                     calculate_running_tally)
 
 
-def total_balance() -> float:
+def fetch_total_balance() -> float:
     """Returns the total balance from the transactions API.
 
     Returns:
