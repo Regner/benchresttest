@@ -1,6 +1,7 @@
 
 
 import re
+import click
 import requests
 
 from itertools import groupby
@@ -151,3 +152,50 @@ def calculate_running_tally(transactions: list) -> list:
         val['running_tally'] = round(val['running_tally'], 2)
 
     return transactions
+
+
+def value_color_picker(value: float) -> str:
+    """Takes a given value and decides what color it should be for click."""
+    if value < 0:
+        color = 'red'
+    else:
+        color = 'green'
+
+    return color
+
+
+def cli_format_transaction_line(day: str, value: float, company: str = None) -> str:
+    """Formats an individual transaction line to be output to the console by click."""
+    date = click.style(day, fg='blue')
+    color = value_color_picker(value)
+    tally = click.style(str(value), fg=color)
+
+    if company is not None:
+        response = '{} {} {}'.format(date, company, tally)
+
+    else:
+        response = '{} {}'.format(date, tally)
+
+    return response
+
+
+def cli_format_transaction_group(category: str, total: float, trans: list):
+    """Formats a grouping of transactions to be output to the console by click."""
+    response = '============================================================\n'
+    response += 'Category: {}\n'.format(click.style(category, fg='cyan'))
+    response += 'Total: {}\n'.format(click.style(str(round(total, 2)), fg=value_color_picker(total)))
+    response += '\n'
+    response += 'Transactions:\n'
+    response += '\n'.join([cli_format_transaction_line(x['Date'], x['Amount'], x['Company']) for x in trans])
+    response += '\n============================================================\n'
+
+    return response
+
+
+def cli_echo(ctx: click.core.Context, output: str):
+    """Prints the output to console for click based on parameters in the context object."""
+    if ctx.obj['page']:
+        click.echo_via_pager(output)
+
+    else:
+        click.echo(output)
